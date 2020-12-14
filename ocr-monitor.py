@@ -8,8 +8,29 @@ import numpy as np
 # ctrl left click pytesseract to see functions of pytesseract
 pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract"
 
+'''
 # Monitor window size
 # mon = {'top': 0, 'left': 0, 'width': 1920, 'height': 1080}
+
+found = False
+
+while not found:
+    img = mss().grab(mon)
+    img = Image.frombytes('RGB', (img.width, img.height), img.rgb)
+    cv2.imshow("Result", np.array(img))
+# level    page_num    block_num    par_num    line_num    word_num    left    top_width    height    conf    text
+    boxes = pytesseract.image_to_data(img)
+    for x, b in enumerate(boxes.splitlines()):
+        if x != 0:
+            b = b.split()[-1]
+            #***** is replaced by whatever you are looking for in string
+            if (***** in b):
+                found = True
+    cv2.waitKey(1) #to show the window of what it is monitoring --> not necessary
+'''
+
+
+# PERSONAL USE BELOW
 # personal custom monitor window size looking for website
 mon = {'top': 100, 'left': -675, 'width': 275, 'height': 830}
 
