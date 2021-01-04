@@ -18,7 +18,12 @@ m = sr.Microphone()
 engine = pyttsx3.init()
 with m as source:
     audio = r.listen(source)
-    print(r.recognize_google(audio, language = 'yue-Hant-HK'))
+    # cantonese
+    # print(r.recognize_google(audio, language = 'yue-Hant-HK'))
+    # print(r.recognize_google(audio, language = 'zh-yue'))
+    # korean
+    # print(r.recognize_google(audio, language = 'ko'))
+
 
 en_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
 kor_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_KO-KR_HEAMI_11.0"
