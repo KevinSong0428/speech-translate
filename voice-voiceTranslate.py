@@ -16,6 +16,9 @@ print(googletrans.LANGUAGES)
 r = sr.Recognizer()
 m = sr.Microphone()
 engine = pyttsx3.init()
+with m as source:
+    audio = r.listen(source)
+    print(r.recognize_google(audio, language = 'yue-Hant-HK'))
 
 en_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
 kor_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_KO-KR_HEAMI_11.0"
@@ -24,7 +27,6 @@ es_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS
 
 voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id)  # changing index, changes voices. o for male, 1 for female
-
 engine.setProperty('rate', 125)  # changing rate to 150 (default is 200)
 
 
@@ -81,32 +83,21 @@ def main():
 
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
 
 
-# only available for languages with 2 gender for voice
-def change_voice():
-    voice = engine.getProperty('voices')
-    if engine.getProperty('voice') == voice[0].id:
-        # changing voice to female
-        engine.setProperty('voice', voice[1].id)
-    else:
-        # changing voice to male
-        engine.setProperty('voice', voice[0].id)
 
 # # default english
 # engine.say("Hello")
 # engine.runAndWait()
-#
-# # change_voice()
 #
 # # korean voice
 # engine.setProperty('voice', kor_voice_id)
 # engine.say("난 아주 많이 당신을 사랑합니다")
 # engine.runAndWait()
 #
-# # chinese (cantonese) voice
+# chinese (cantonese) voice
 # engine.setProperty('voice', ch_voice_id)
 # engine.say("我非常爱你")
 # engine.runAndWait()
@@ -126,17 +117,6 @@ def change_voice():
 #     audio = r.record(source)
 # print(r.recognize_google(audio))
 
-
-# print(googletrans.LANGUAGES)
-
-'''
-result. ..src: 
-The source language
-dest: Destination language, which is set to English (en)
-origin: Original text, that is 'Mitä sinä teet' in our example
-text: Translated text, that will be 'what are you doing?' in our case
-pronunciation: Pronunciation of the translated text
-'''
 
 # with m as source:
 #     r.adjust_for_ambient_noise(source)
