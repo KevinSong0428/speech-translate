@@ -16,14 +16,32 @@ print(googletrans.LANGUAGES)
 r = sr.Recognizer()
 m = sr.Microphone()
 engine = pyttsx3.init()
+
+'''
 with m as source:
     audio = r.listen(source)
+# https://stackoverflow.com/questions/14257598/what-are-language-codes-in-chromes-implementation-of-the-html5-speech-recogniti/14302134#14302134
     # cantonese
-    # print(r.recognize_google(audio, language = 'yue-Hant-HK'))
-    # print(r.recognize_google(audio, language = 'zh-yue'))
+    # print(r.recognize_google(audio, language = 'yue-Hant-HK')) https://cloud.google.com/speech-to-text/docs/languages
+    # print(r.recognize_google(audio, language = 'zh-yue')) https://www.science.co.il/language/Locale-codes.php
     # korean
     # print(r.recognize_google(audio, language = 'ko'))
+'''
 
+def speak_korean():
+    with m as source:
+        audio = r.listen(source)
+        print(r.recognize_google(audio, language = 'ko'))
+
+def speak_cantonese():
+    with m as source:
+        audio = r.listen(source)
+        print(r.recognize_google(audio, language = 'yue-Hant-HK'))
+
+def speak_english():
+    with m as source:
+        audio = r.listen(source)
+        print(r.recognize_google(audio)
 
 en_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
 kor_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_KO-KR_HEAMI_11.0"
