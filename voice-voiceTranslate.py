@@ -10,12 +10,22 @@ pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesse
 # for index, name in enumerate(sr.Microphone.list_microphone_names()):
 #     print("Microphone with name \"{1}\" found for `Microphone(device_index={0})`".format(index, name))
 
+# prints all languages to translate to and from
 print(googletrans.LANGUAGES)
 
 # initialize var
 r = sr.Recognizer()
 m = sr.Microphone()
 engine = pyttsx3.init()
+
+en_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
+kor_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_KO-KR_HEAMI_11.0"
+ch_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_ZH-HK_TRACY_11.0"
+es_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_ES-ES_HELENA_11.0"
+
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[0].id)  # changing index, changes voices. o for male, 1 for female
+engine.setProperty('rate', 125)  # changing rate to 150 (default is 200)
 
 '''
 with m as source:
@@ -28,31 +38,102 @@ with m as source:
     # print(r.recognize_google(audio, language = 'ko'))
 '''
 
+
+# noinspection PyRedundantParentheses
+def startConversion(lang="en-US", dst_lang='en-US'):
+    with m as source:
+        audio_text = r.record(source)
+        text = r.recognize_google(audio_text, language=lang)
+        print(text)
+
+    translator = Translator()
+    if (dst_lang == "en-US" or dst_lang == ''):
+        # wants to translate to english
+        lang = TextBlob(text)
+        lang = lang.detect_language()
+        result = translator.translate(text, src=lang)
+        engine.setProperty('voice', en_voice_id)
+        engine.say(result.text)
+        engine.runAndWait()
+        print(result.text)
+    else:
+        if (dst_lang == "korean" or dst_lang == "ko"):
+            # wants to translate to korean
+            result = translator.translate(text, dest=dst_lang)
+            engine.setProperty('voice', kor_voice_id)
+            engine.say(result.text)
+            engine.runAndWait()
+            print(result.text)
+        elif (dst_lang == "spanish" or dst_lang == "es"):
+            # wants to translate to spanish
+            result = translator.translate(text, dest=dst_lang)
+            engine.setProperty('voice', es_voice_id)
+            engine.say(result.text)
+            engine.runAndWait()
+            print(result.text)
+        elif (dst_lang == 'chinese (traditional)' or dst_lang == 'zh-tw'):
+            # wants to translate to spanish
+            result = translator.translate(text, dest=dst_lang)
+            engine.setProperty('voice', ch_voice_id)
+            engine.say(result.text)
+            engine.runAndWait()
+            print(result.text)
+
+
 def speak_korean():
     with m as source:
         audio = r.listen(source)
-        print(r.recognize_google(audio, language = 'ko'))
+        text = r.recognize_google(audio, language='ko')
+        print(text)
+
 
 def speak_cantonese():
     with m as source:
         audio = r.listen(source)
-        print(r.recognize_google(audio, language = 'yue-Hant-HK'))
+        text = r.recognize_google(audio, language='yue-Hant-HK')
+        print(text)
+
 
 def speak_english():
     with m as source:
         audio = r.listen(source)
-        print(r.recognize_google(audio)
-
-en_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
-kor_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_KO-KR_HEAMI_11.0"
-ch_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_ZH-HK_TRACY_11.0"
-es_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_ES-ES_HELENA_11.0"
-
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)  # changing index, changes voices. o for male, 1 for female
-engine.setProperty('rate', 125)  # changing rate to 150 (default is 200)
+        text = r.recognize_google(audio)
+        print(text)
 
 
+def main():
+    language = input("What language do you speak? ")
+    translate = input("What language do you want to translate to? ")
+    english = {'english', 'en', 'eng', 'English', 'Eng'}
+    korean = {'korean', 'ko', 'Korean', 'kor'}
+    cantonese = {'canto', 'cantonese', 'Cantonese', 'zh-tw', 'chinese (traditional)', 'chinese'}
+    spanish = {'spanish', 'Spanish', 'espanol', 'Espanol'}
+    if (language in english):
+        language = ''
+    elif (language in korean):
+        language = 'ko'
+    elif (language in cantonese):
+        language = 'yue-Hant-HK'
+    elif (language in spanish):
+        language = 'spanish'
+    if (translate in english):
+        translate = ''
+    elif (translate in korean):
+        translate = 'korean'
+    elif (translate in cantonese):
+        translate = 'chinese (traditional)'
+    elif (translate in spanish):
+        translate = 'spanish'
+    print('lang: ' + language + ' trans: ' + translate + '\n')
+    startConversion(language, translate)
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+'''
 def startConversion(path='sample.wav', lang="en-US", dst_lang='en-US'):
     with sr.AudioFile(path) as source:
         print('Fetching File: ' + path)
@@ -73,7 +154,7 @@ def startConversion(path='sample.wav', lang="en-US", dst_lang='en-US'):
         # wants to translate to english
         lang = TextBlob(text)
         lang = lang.detect_language()
-        result = translator.translate(text, src = lang)
+        result = translator.translate(text, src=lang)
         engine.setProperty('voice', en_voice_id)
         engine.say(result.text)
         engine.runAndWait()
@@ -81,18 +162,19 @@ def startConversion(path='sample.wav', lang="en-US", dst_lang='en-US'):
     else:
         if (dst_lang == "korean" or dst_lang == "ko"):
             # wants to translate to korean
-            result = translator.translate(text, dest = dst_lang)
+            result = translator.translate(text, dest=dst_lang)
             engine.setProperty('voice', kor_voice_id)
             engine.say(result.text)
             engine.runAndWait()
             print(result.text)
         elif (dst_lang == "spanish" or dst_lang == "es"):
             # wants to translate to spanish
-            result = translator.translate(text, dest = dst_lang)
+            result = translator.translate(text, dest=dst_lang)
             engine.setProperty('voice', es_voice_id)
             engine.say(result.text)
             engine.runAndWait()
             print(result.text)
+
 
 
 def main():
@@ -105,10 +187,9 @@ def main():
     startConversion("KOR_001.wav", "ko-KR", 'spanish')
 
 
-
-# if __name__ == "__main__":
-#     main()
-
+if __name__ == "__main__":
+    main()
+'''
 
 
 # # default english
