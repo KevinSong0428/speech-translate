@@ -42,8 +42,8 @@ with m as source:
 # noinspection PyRedundantParentheses
 def startConversion(lang="en-US", dst_lang='en-US'):
     with m as source:
-        audio_text = r.record(source)
-        text = r.recognize_google(audio_text, language=lang)
+        audio = r.listen(source)
+        text = r.recognize_google(audio, language=lang)
         print(text)
 
     translator = Translator()
@@ -80,27 +80,6 @@ def startConversion(lang="en-US", dst_lang='en-US'):
             print(result.text)
 
 
-def speak_korean():
-    with m as source:
-        audio = r.listen(source)
-        text = r.recognize_google(audio, language='ko')
-        print(text)
-
-
-def speak_cantonese():
-    with m as source:
-        audio = r.listen(source)
-        text = r.recognize_google(audio, language='yue-Hant-HK')
-        print(text)
-
-
-def speak_english():
-    with m as source:
-        audio = r.listen(source)
-        text = r.recognize_google(audio)
-        print(text)
-
-
 def main():
     language = input("What language do you speak? ")
     translate = input("What language do you want to translate to? ")
@@ -109,7 +88,7 @@ def main():
     cantonese = {'canto', 'cantonese', 'Cantonese', 'zh-tw', 'chinese (traditional)', 'chinese'}
     spanish = {'spanish', 'Spanish', 'espanol', 'Espanol'}
     if (language in english):
-        language = ''
+        language = 'en-US'
     elif (language in korean):
         language = 'ko'
     elif (language in cantonese):
@@ -117,7 +96,7 @@ def main():
     elif (language in spanish):
         language = 'spanish'
     if (translate in english):
-        translate = ''
+        translate = 'en-US'
     elif (translate in korean):
         translate = 'korean'
     elif (translate in cantonese):
