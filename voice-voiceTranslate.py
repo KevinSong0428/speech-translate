@@ -1,17 +1,16 @@
 import speech_recognition as sr
 from googletrans import Translator
-import pytesseract
 import pyttsx3  # text to speech
-from textblob import TextBlob
 import googletrans
+import tkinter as tk
 
-pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract"
+
 
 # for index, name in enumerate(sr.Microphone.list_microphone_names()):
 #     print("Microphone with name \"{1}\" found for `Microphone(device_index={0})`".format(index, name))
 
 # prints all languages to translate to and from
-print(googletrans.LANGUAGES)
+# print(googletrans.LANGUAGES)
 
 # initialize var
 r = sr.Recognizer()
@@ -27,19 +26,7 @@ voices = engine.getProperty('voices')
 engine.setProperty('voice', voices[0].id)  # changing index, changes voices. o for male, 1 for female
 engine.setProperty('rate', 125)  # changing rate to 150 (default is 200)
 
-'''
-with m as source:
-    audio = r.listen(source)
-# https://stackoverflow.com/questions/14257598/what-are-language-codes-in-chromes-implementation-of-the-html5-speech-recogniti/14302134#14302134
-    # cantonese
-    # print(r.recognize_google(audio, language = 'yue-Hant-HK')) https://cloud.google.com/speech-to-text/docs/languages
-    # print(r.recognize_google(audio, language = 'zh-yue')) https://www.science.co.il/language/Locale-codes.php
-    # korean
-    # print(r.recognize_google(audio, language = 'ko'))
-'''
 
-
-# noinspection PyRedundantParentheses
 def startConversion(lang="en-US", dst_lang='en-US'):
     with m as source:
         audio = r.listen(source)
@@ -49,35 +36,22 @@ def startConversion(lang="en-US", dst_lang='en-US'):
     translator = Translator()
     if (dst_lang == "en-US" or dst_lang == ''):
         # wants to translate to english
-        lang = TextBlob(text)
-        lang = lang.detect_language()
-        result = translator.translate(text, src=lang)
+        result = translator.translate(text)
         engine.setProperty('voice', en_voice_id)
-        engine.say(result.text)
-        engine.runAndWait()
-        print(result.text)
     else:
+        result = translator.translate(text, dest=dst_lang)
         if (dst_lang == "korean" or dst_lang == "ko"):
             # wants to translate to korean
-            result = translator.translate(text, dest=dst_lang)
             engine.setProperty('voice', kor_voice_id)
-            engine.say(result.text)
-            engine.runAndWait()
-            print(result.text)
         elif (dst_lang == "spanish" or dst_lang == "es"):
             # wants to translate to spanish
-            result = translator.translate(text, dest=dst_lang)
             engine.setProperty('voice', es_voice_id)
-            engine.say(result.text)
-            engine.runAndWait()
-            print(result.text)
         elif (dst_lang == 'chinese (traditional)' or dst_lang == 'zh-tw'):
             # wants to translate to spanish
-            result = translator.translate(text, dest=dst_lang)
             engine.setProperty('voice', ch_voice_id)
-            engine.say(result.text)
-            engine.runAndWait()
-            print(result.text)
+    engine.say(result.text)
+    engine.runAndWait()
+    print(result.text)
 
 
 def main():
@@ -108,6 +82,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # print("HELLO WORLD\n")
     main()
 
 
@@ -131,9 +106,7 @@ def startConversion(path='sample.wav', lang="en-US", dst_lang='en-US'):
     translator = Translator()
     if (dst_lang == "en-US" or dst_lang == ''):
         # wants to translate to english
-        lang = TextBlob(text)
-        lang = lang.detect_language()
-        result = translator.translate(text, src=lang)
+        result = translator.translate(text)
         engine.setProperty('voice', en_voice_id)
         engine.say(result.text)
         engine.runAndWait()
