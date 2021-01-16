@@ -22,35 +22,16 @@ engine.setProperty('rate', 125)  # changing rate to 150 (default is 200)
 
 
 def startConversion(lang, dst_lang):
+    print(lang + ' ' + dst_lang + '\n')
     with m as source:
         audio = r.listen(source)
-        text = r.recognize_google(audio, language=lang)
-        print(text)
-    # translator = Translator()
-    # if (dst_lang == "en-US"):
-    #     # wants to translate to english
-    #     engine.setProperty('voice', en_voice_id)
-    # elif (dst_lang == "korean"):
-    #     # wants to translate to korean
-    #     engine.setProperty('voice', kor_voice_id)
-    # elif (dst_lang == "spanish"):
-    #     # wants to translate to spanish
-    #     engine.setProperty('voice', es_voice_id)
-    # elif (dst_lang == 'chinese (traditional)):
-    #     # wants to translate to spanish
-    #     engine.setProperty('voice', ch_voice_id)
-    # result = translator.translate(text, dest = dst_lang)
-    # engine.say(result.text)
-    # engine.runAndWait()
-    # print(result.text)
-    #
+        text = r.recognize_google(audio, language = lang)
+        print("INPUT: " + text)
     translator = Translator()
     if (dst_lang == "en-US"):
         # wants to translate to english
-        result = translator.translate(text)
         engine.setProperty('voice', en_voice_id)
     else:
-        result = translator.translate(text, dest=dst_lang)
         if (dst_lang == "korean"):
             # wants to translate to korean
             engine.setProperty('voice', kor_voice_id)
@@ -60,9 +41,10 @@ def startConversion(lang, dst_lang):
         elif (dst_lang == "chinese (traditional)"):
             # wants to translate to spanish
             engine.setProperty('voice', ch_voice_id)
+    result = translator.translate(text, dest=dst_lang)
     engine.say(result.text)
     engine.runAndWait()
-    print(result.text)
+    print("OUTPUT: " + result.text)
 
 # initialize GUI: Translator
 gui = tk.Tk(className="Translator")
@@ -85,24 +67,26 @@ drop1.pack()
 drop2.pack()
 
 
-def checkLang(var):
-    if (var == "English"):
-        return "english"
-    if (var == "中文"):
-        return "chinese (traditional)"
-    if (var == "한국어"):
-        return "korean"
-    if (var == "Español"):
+def checkLang(lang, var):
+    # input, output language
+    # audio and translator input is different so must a variable to distinguish
+    if (lang == "English"):
+        return "en-US"
+    if (lang == "中文"):
+        list1 = ["yue-Hant-HK", "chinese (traditional)"]
+        return list1[var]
+    if (lang == "한국어"):
+        list1 = ["ko", "korean"]
+        return list1[var]
+    if (lang == "Español"):
         return "spanish"
-
 
 
 def convert():
     global srcLang, dstLang
     # get dropdown selected as inputs
-    srcLang = checkLang(sourceLang.get())
-    dstLang = checkLang(destLang.get())
-    print("var1: " + srcLang + " var2: " + dstLang + '\n')
+    srcLang = checkLang(sourceLang.get(), 0)
+    dstLang = checkLang(destLang.get(), 1)
     startConversion(srcLang, dstLang)
 
 
@@ -113,82 +97,6 @@ startConvert.pack()
 
 gui.mainloop()
 
-'''
-# prints all languages to translate to and from
-# print(googletrans.LANGUAGES)
-
-# initialize var
-r = sr.Recognizer()
-m = sr.Microphone()
-engine = pyttsx3.init()
-
-en_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
-kor_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_KO-KR_HEAMI_11.0"
-ch_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_ZH-HK_TRACY_11.0"
-es_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_ES-ES_HELENA_11.0"
-
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[0].id)  # changing index, changes voices. o for male, 1 for female
-engine.setProperty('rate', 125)  # changing rate to 150 (default is 200)
-
-
-def startConversion(lang="en-US", dst_lang='en-US'):
-    with m as source:
-        audio = r.listen(source)
-        text = r.recognize_google(audio, language=lang)
-        print(text)
-
-    translator = Translator()
-    if (dst_lang == "en-US" or dst_lang == ''):
-        # wants to translate to english
-        result = translator.translate(text)
-        engine.setProperty('voice', en_voice_id)
-    else:
-        result = translator.translate(text, dest=dst_lang)
-        if (dst_lang == "korean" or dst_lang == "ko"):
-            # wants to translate to korean
-            engine.setProperty('voice', kor_voice_id)
-        elif (dst_lang == "spanish" or dst_lang == "es"):
-            # wants to translate to spanish
-            engine.setProperty('voice', es_voice_id)
-        elif (dst_lang == 'chinese (traditional)' or dst_lang == 'zh-tw'):
-            # wants to translate to spanish
-            engine.setProperty('voice', ch_voice_id)
-    engine.say(result.text)
-    engine.runAndWait()
-    print(result.text)
-
-
-def main():
-    language = input("What language do you speak? ")
-    translate = input("What language do you want to translate to? ")
-    english = {'english', 'en', 'eng', 'English', 'Eng'}
-    korean = {'korean', 'ko', 'Korean', 'kor'}
-    cantonese = {'canto', 'cantonese', 'Cantonese', 'zh-tw', 'chinese (traditional)', 'chinese'}
-    spanish = {'spanish', 'Spanish', 'espanol', 'Espanol'}
-    if (language in english):
-        language = 'en-US'
-    elif (language in korean):
-        language = 'ko'
-    elif (language in cantonese):
-        language = 'yue-Hant-HK'
-    elif (language in spanish):
-        language = 'spanish'
-    if (translate in english):
-        translate = 'en-US'
-    elif (translate in korean):
-        translate = 'korean'
-    elif (translate in cantonese):
-        translate = 'chinese (traditional)'
-    elif (translate in spanish):
-        translate = 'spanish'
-    print('lang: ' + language + ' trans: ' + translate + '\n')
-    startConversion(language, translate)
-
-
-if __name__ == "__main__":
-    main()
-'''
 
 '''
 def startConversion(path='sample.wav', lang="en-US", dst_lang='en-US'):
