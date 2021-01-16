@@ -4,11 +4,116 @@ import pyttsx3  # text to speech
 import googletrans
 import tkinter as tk
 
+# initialize var
+r = sr.Recognizer()
+m = sr.Microphone()
+engine = pyttsx3.init()
+
+# print(googletrans.LANGUAGES)
+
+en_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
+kor_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_KO-KR_HEAMI_11.0"
+ch_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_ZH-HK_TRACY_11.0"
+es_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_ES-ES_HELENA_11.0"
+
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[1].id)  # changing index, changes voices. o for male, 1 for female
+engine.setProperty('rate', 125)  # changing rate to 150 (default is 200)
 
 
-# for index, name in enumerate(sr.Microphone.list_microphone_names()):
-#     print("Microphone with name \"{1}\" found for `Microphone(device_index={0})`".format(index, name))
+def startConversion(lang, dst_lang):
+    with m as source:
+        audio = r.listen(source)
+        text = r.recognize_google(audio, language=lang)
+        print(text)
+    # translator = Translator()
+    # if (dst_lang == "en-US"):
+    #     # wants to translate to english
+    #     engine.setProperty('voice', en_voice_id)
+    # elif (dst_lang == "korean"):
+    #     # wants to translate to korean
+    #     engine.setProperty('voice', kor_voice_id)
+    # elif (dst_lang == "spanish"):
+    #     # wants to translate to spanish
+    #     engine.setProperty('voice', es_voice_id)
+    # elif (dst_lang == 'chinese (traditional)):
+    #     # wants to translate to spanish
+    #     engine.setProperty('voice', ch_voice_id)
+    # result = translator.translate(text, dest = dst_lang)
+    # engine.say(result.text)
+    # engine.runAndWait()
+    # print(result.text)
+    #
+    translator = Translator()
+    if (dst_lang == "en-US"):
+        # wants to translate to english
+        result = translator.translate(text)
+        engine.setProperty('voice', en_voice_id)
+    else:
+        result = translator.translate(text, dest=dst_lang)
+        if (dst_lang == "korean"):
+            # wants to translate to korean
+            engine.setProperty('voice', kor_voice_id)
+        elif (dst_lang == "spanish"):
+            # wants to translate to spanish
+            engine.setProperty('voice', es_voice_id)
+        elif (dst_lang == "chinese (traditional)"):
+            # wants to translate to spanish
+            engine.setProperty('voice', ch_voice_id)
+    engine.say(result.text)
+    engine.runAndWait()
+    print(result.text)
 
+# initialize GUI: Translator
+gui = tk.Tk(className="Translator")
+gui.geometry("400x300")
+
+# language choices to pick from (available to translate to and from
+LANGUAGE = ['English', '中文', '한국어', 'Español']
+
+sourceLang = tk.StringVar(gui)
+destLang = tk.StringVar(gui)
+
+# # default value in drop down menu will be English
+sourceLang.set(LANGUAGE[0])
+destLang.set(LANGUAGE[0])
+
+drop1 = tk.OptionMenu(gui, sourceLang, *LANGUAGE)
+drop2 = tk.OptionMenu(gui, destLang, *LANGUAGE)
+
+drop1.pack()
+drop2.pack()
+
+
+def checkLang(var):
+    if (var == "English"):
+        return "english"
+    if (var == "中文"):
+        return "chinese (traditional)"
+    if (var == "한국어"):
+        return "korean"
+    if (var == "Español"):
+        return "spanish"
+
+
+
+def convert():
+    global srcLang, dstLang
+    # get dropdown selected as inputs
+    srcLang = checkLang(sourceLang.get())
+    dstLang = checkLang(destLang.get())
+    print("var1: " + srcLang + " var2: " + dstLang + '\n')
+    startConversion(srcLang, dstLang)
+
+
+startConvert = tk.Button(gui, text="Convert", padx=10, pady=5, fg="white", bg="#263D42",
+                         command=convert)
+
+startConvert.pack()
+
+gui.mainloop()
+
+'''
 # prints all languages to translate to and from
 # print(googletrans.LANGUAGES)
 
@@ -82,10 +187,8 @@ def main():
 
 
 if __name__ == "__main__":
-    # print("HELLO WORLD\n")
     main()
-
-
+'''
 
 '''
 def startConversion(path='sample.wav', lang="en-US", dst_lang='en-US'):
@@ -142,7 +245,6 @@ def main():
 if __name__ == "__main__":
     main()
 '''
-
 
 # # default english
 # engine.say("Hello")
