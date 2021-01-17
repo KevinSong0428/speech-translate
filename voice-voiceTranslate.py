@@ -9,7 +9,6 @@ r = sr.Recognizer()
 m = sr.Microphone()
 engine = pyttsx3.init()
 
-# print(googletrans.LANGUAGES)
 
 en_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
 kor_voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_KO-KR_HEAMI_11.0"
@@ -22,7 +21,6 @@ engine.setProperty('rate', 125)  # changing rate to 150 (default is 200)
 
 
 def startConversion(lang, dst_lang):
-    print(lang + ' ' + dst_lang + '\n')
     with m as source:
         audio = r.listen(source)
         text = r.recognize_google(audio, language = lang)
@@ -66,12 +64,18 @@ drop2 = tk.OptionMenu(gui, destLang, *LANGUAGE)
 drop1.pack()
 drop2.pack()
 
+# https://cloud.google.com/speech-to-text/docs/languages <-- input langauge list
+# print(googletrans.LANGUAGES) <-- output language list
+# if want to add more langauges, find on both list, make list and download language on computer to get the voice ID
+# for voice in voices:
+#     print(" - ID: %s" % voice.id)
 
 def checkLang(lang, var):
     # input, output language
     # audio and translator input is different so must a variable to distinguish
     if (lang == "English"):
-        return "en-US"
+        list1 = ["en-US", "English"]
+        return list1[var]
     if (lang == "中文"):
         list1 = ["yue-Hant-HK", "chinese (traditional)"]
         return list1[var]
